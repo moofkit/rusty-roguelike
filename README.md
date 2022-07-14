@@ -5,3 +5,6 @@
 
 ### Adds graphics
 ![demo](./demo.gif)
+
+### Adds enemies
+![demo](./demo_enemies.gif)

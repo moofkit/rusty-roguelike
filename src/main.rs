@@ -39,6 +39,12 @@ impl State {
         let mut rng = RandomNumberGenerator::new();
         let builder = MapBuilder::new(&mut rng);
         spawn_player(&mut ecs, builder.player_start);
+        builder
+            .rooms
+            .iter()
+            .skip(1)
+            .map(bracket_lib::prelude::Rect::center)
+            .for_each(|pos| spawn_enemy(&mut ecs, &mut rng, pos));
         resources.insert(builder.map);
         resources.insert(Camera::new(builder.player_start));
         Self {
