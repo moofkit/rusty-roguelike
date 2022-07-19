@@ -26,7 +26,8 @@ pub fn spawn_enemy(ecs: &mut World, rng: &mut RandomNumberGenerator, pos: Point)
                     2 => to_cp437('o'), // ogr
                     _ => to_cp437('g') // goblin
                 }
-            }
+            },
+            MovingRandomly
         )
     );
 }
