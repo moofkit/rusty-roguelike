@@ -10,15 +10,17 @@ pub fn map_render(#[resource] map: &Map, #[resource] camera: &Camera) {
             let offset = Point::new(camera.left_x, camera.top_y);
             if map.in_bounds(pt) {
                 let idx = map_idx(x, y);
-                let glyph = match map.tiles[idx] {
-                    TileType::Floor => to_cp437('.'),
-                    TileType::Wall => to_cp437('#')
+                if let Some(tile) = map.tiles.get(idx) {
+                    let glyph = match tile {
+                        TileType::Floor => to_cp437('.'),
+                        TileType::Wall => to_cp437('#')
+                    };
+                    draw_batch.set(
+                        pt - offset,
+                        ColorPair::new(WHITE, BLACK),
+                        glyph
+                    );
                 };
-                draw_batch.set(
-                    pt - offset,
-                    ColorPair::new(WHITE, BLACK),
-                    glyph
-                );
             }
         }
     }
