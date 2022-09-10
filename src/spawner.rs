@@ -9,8 +9,8 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
             glyph: to_cp437('@'),
         },
         Health {
-            max: 20,
-            current: 20,
+            max: 10,
+            current: 10,
         },
     ));
 }
@@ -27,7 +27,7 @@ pub fn spawn_enemy(ecs: &mut World, rng: &mut RandomNumberGenerator, pos: Point)
             color: ColorPair::new(WHITE, BLACK),
             glyph: glyph,
         },
-        MovingRandomly {},
+        ChasingPlayer {},
         Health {
             max: hp,
             current: hp,
