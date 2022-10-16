@@ -12,6 +12,7 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
             max: 10,
             current: 10,
         },
+        FieldOfView::new(8),
     ));
 }
 
@@ -25,7 +26,7 @@ pub fn spawn_enemy(ecs: &mut World, rng: &mut RandomNumberGenerator, pos: Point)
         pos,
         Render {
             color: ColorPair::new(WHITE, BLACK),
-            glyph: glyph,
+            glyph,
         },
         ChasingPlayer {},
         Health {
@@ -33,6 +34,7 @@ pub fn spawn_enemy(ecs: &mut World, rng: &mut RandomNumberGenerator, pos: Point)
             current: hp,
         },
         Name(name),
+        FieldOfView::new(6),
     ));
 }
 
