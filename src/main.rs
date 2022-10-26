@@ -45,11 +45,9 @@ impl State {
         spawn_player(&mut ecs, builder.player_start);
         spawn_amulet(&mut ecs, builder.amulet_start);
         builder
-            .rooms
+            .monster_spawns
             .iter()
-            .skip(1)
-            .map(bracket_lib::prelude::Rect::center)
-            .for_each(|pos| spawn_enemy(&mut ecs, &mut rng, pos));
+            .for_each(|pos| spawn_enemy(&mut ecs, &mut rng, *pos));
         resources.insert(builder.map);
         resources.insert(Camera::new(builder.player_start));
         resources.insert(TurnState::AwaitingInput);
@@ -70,11 +68,9 @@ impl State {
         spawn_player(&mut self.ecs, builder.player_start);
         spawn_amulet(&mut self.ecs, builder.amulet_start);
         builder
-            .rooms
+            .monster_spawns
             .iter()
-            .skip(1)
-            .map(bracket_lib::prelude::Rect::center)
-            .for_each(|pos| spawn_enemy(&mut self.ecs, &mut rng, pos));
+            .for_each(|pos| spawn_enemy(&mut self.ecs, &mut rng, *pos));
         self.resources.insert(builder.map);
         self.resources.insert(Camera::new(builder.player_start));
         self.resources.insert(TurnState::AwaitingInput);
