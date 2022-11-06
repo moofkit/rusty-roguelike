@@ -5,6 +5,8 @@ mod rooms;
 use rooms::RoomsArchitect;
 mod automata;
 use automata::CellularAutomataArchitect;
+mod drunkard;
+use drunkard::DrunkardsWalkArchitect;
 
 const NUM_ROOMS: usize = 20;
 const NUM_MONSTERS: usize = 50;
@@ -20,7 +22,11 @@ pub struct MapBuilder {
 
 impl MapBuilder {
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-        let mut architect = CellularAutomataArchitect {};
+        let mut architect: Box<dyn MapArchitect> = match rng.range(0, 3) {
+            0 => Box::new(RoomsArchitect {}),
+            1 => Box::new(DrunkardsWalkArchitect {}),
+            _ => Box::new(CellularAutomataArchitect {}),
+        };
         architect.new(rng)
     }
 
