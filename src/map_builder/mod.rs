@@ -7,6 +7,8 @@ mod automata;
 use automata::CellularAutomataArchitect;
 mod drunkard;
 use drunkard::DrunkardsWalkArchitect;
+mod prefab;
+use prefab::apply_prefab;
 
 const NUM_ROOMS: usize = 20;
 const NUM_MONSTERS: usize = 50;
@@ -27,7 +29,9 @@ impl MapBuilder {
             1 => Box::new(DrunkardsWalkArchitect {}),
             _ => Box::new(CellularAutomataArchitect {}),
         };
-        architect.new(rng)
+        let mut mb = architect.new(rng);
+        apply_prefab(&mut mb, rng);
+        mb
     }
 
     fn fill(&mut self, tile: TileType) {

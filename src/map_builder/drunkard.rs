@@ -32,14 +32,14 @@ impl MapArchitect for DrunkardsWalkArchitect {
                 rng,
                 &mut mb.map,
             );
-            let dejkstra_map = DijkstraMap::new(
+            let dijkstra_map = DijkstraMap::new(
                 SCREEN_WIDTH,
                 SCREEN_HEIGHT,
                 &vec![mb.map.point2d_to_index(center)],
                 &mb.map,
                 1024.0,
             );
-            dejkstra_map
+            dijkstra_map
                 .map
                 .iter()
                 .enumerate()
