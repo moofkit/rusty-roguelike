@@ -51,6 +51,7 @@ impl State {
         resources.insert(builder.map);
         resources.insert(Camera::new(builder.player_start));
         resources.insert(TurnState::AwaitingInput);
+        resources.insert(builder.theme);
         Self {
             ecs,
             resources,
@@ -74,6 +75,7 @@ impl State {
         self.resources.insert(builder.map);
         self.resources.insert(Camera::new(builder.player_start));
         self.resources.insert(TurnState::AwaitingInput);
+        self.resources.insert(builder.theme);
     }
 
     fn game_over(&mut self, ctx: &mut BTerm) {
