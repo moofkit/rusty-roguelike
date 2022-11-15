@@ -41,9 +41,10 @@ impl State {
         let mut ecs = World::default();
         let mut resources = Resources::default();
         let mut rng = RandomNumberGenerator::new();
-        let builder = MapBuilder::new(&mut rng);
+        let mut builder = MapBuilder::new(&mut rng);
         spawn_player(&mut ecs, builder.player_start);
-        spawn_amulet(&mut ecs, builder.amulet_start);
+        let idx_exit = builder.map.point2d_to_index(builder.amulet_start);
+        builder.map.tiles[idx_exit] = TileType::Exit;
         builder
             .monster_spawns
             .iter()
@@ -65,9 +66,10 @@ impl State {
         self.ecs = World::default();
         self.resources = Resources::default();
         let mut rng = RandomNumberGenerator::new();
-        let builder = MapBuilder::new(&mut rng);
+        let mut builder = MapBuilder::new(&mut rng);
         spawn_player(&mut self.ecs, builder.player_start);
-        spawn_amulet(&mut self.ecs, builder.amulet_start);
+        let idx_exit = builder.map.point2d_to_index(builder.amulet_start);
+        builder.map.tiles[idx_exit] = TileType::Exit;
         builder
             .monster_spawns
             .iter()
@@ -119,6 +121,59 @@ impl State {
             self.reset_game_state();
         }
     }
+
+    fn advance_level(&mut self) {
+        use std::collections::HashSet;
+
+        let player_entity = *<Entity>::query()
+            .filter(component::<Player>())
+            .iter(&mut self.ecs)
+            .nth(0)
+            .unwrap();
+        let mut entities_to_keep = HashSet::new();
+        entities_to_keep.insert(player_entity);
+        <(Entity, &Carried)>::query()
+            .iter(&self.ecs)
+            .filter(|(_, carry)| carry.0 == player_entity)
+            .map(|(entity, _)| *entity)
+            .for_each(|entity| {
+                entities_to_keep.insert(entity);
+            });
+        let mut cb = CommandBuffer::new(&self.ecs);
+        for enitiy in Entity::query().iter(&self.ecs) {
+            if !entities_to_keep.contains(enitiy) {
+                cb.remove(*enitiy);
+            }
+        }
+        cb.flush(&mut self.ecs);
+        <&mut FieldOfView>::query()
+            .iter_mut(&mut self.ecs)
+            .for_each(|fov| fov.is_dirty = true);
+        let mut rng = RandomNumberGenerator::new();
+        let mut builder = MapBuilder::new(&mut rng);
+        let mut map_level = 0;
+        <(&mut Player, &mut Point)>::query()
+            .iter_mut(&mut self.ecs)
+            .for_each(|(player, pos)| {
+                *pos = builder.player_start;
+                player.map_level += 1;
+                map_level = player.map_level;
+            });
+        if map_level == 2 {
+            spawn_amulet(&mut self.ecs, builder.amulet_start);
+        } else {
+            let idx_exit = builder.map.point2d_to_index(builder.amulet_start);
+            builder.map.tiles[idx_exit] = TileType::Exit;
+        }
+        builder
+            .monster_spawns
+            .iter()
+            .for_each(|pos| spawn_entity(&mut self.ecs, &mut rng, *pos));
+        self.resources.insert(builder.map);
+        self.resources.insert(Camera::new(builder.player_start));
+        self.resources.insert(TurnState::AwaitingInput);
+        self.resources.insert(builder.theme);
+    }
 }
 
 impl GameState for State {
@@ -144,6 +199,7 @@ impl GameState for State {
                 .execute(&mut self.ecs, &mut self.resources),
             TurnState::GameOver => self.game_over(ctx),
             TurnState::Victory => self.victory(ctx),
+            TurnState::NextLevel => self.advance_level(),
         }
         render_draw_buffer(ctx).expect("Render error");
     }
