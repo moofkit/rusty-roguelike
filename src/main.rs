@@ -45,10 +45,7 @@ impl State {
         spawn_player(&mut ecs, builder.player_start);
         let idx_exit = builder.map.point2d_to_index(builder.amulet_start);
         builder.map.tiles[idx_exit] = TileType::Exit;
-        builder
-            .monster_spawns
-            .iter()
-            .for_each(|pos| spawn_entity(&mut ecs, &mut rng, *pos));
+        spawn_level(&mut ecs, &mut rng, 0, &builder.monster_spawns);
         resources.insert(builder.map);
         resources.insert(Camera::new(builder.player_start));
         resources.insert(TurnState::AwaitingInput);
@@ -70,10 +67,7 @@ impl State {
         spawn_player(&mut self.ecs, builder.player_start);
         let idx_exit = builder.map.point2d_to_index(builder.amulet_start);
         builder.map.tiles[idx_exit] = TileType::Exit;
-        builder
-            .monster_spawns
-            .iter()
-            .for_each(|pos| spawn_entity(&mut self.ecs, &mut rng, *pos));
+        spawn_level(&mut self.ecs, &mut rng, 0, &builder.monster_spawns);
         self.resources.insert(builder.map);
         self.resources.insert(Camera::new(builder.player_start));
         self.resources.insert(TurnState::AwaitingInput);
@@ -165,10 +159,12 @@ impl State {
             let idx_exit = builder.map.point2d_to_index(builder.amulet_start);
             builder.map.tiles[idx_exit] = TileType::Exit;
         }
-        builder
-            .monster_spawns
-            .iter()
-            .for_each(|pos| spawn_entity(&mut self.ecs, &mut rng, *pos));
+        spawn_level(
+            &mut self.ecs,
+            &mut rng,
+            map_level as usize,
+            &builder.monster_spawns,
+        );
         self.resources.insert(builder.map);
         self.resources.insert(Camera::new(builder.player_start));
         self.resources.insert(TurnState::AwaitingInput);
