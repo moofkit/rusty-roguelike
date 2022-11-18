@@ -26,6 +26,7 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
             current: 10,
         },
         FieldOfView::new(8),
+        Damage(1),
     ));
 }
 
