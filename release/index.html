@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+  </head>
+  <style>
+      html, body {
+      width: 100%;
+      height: 100%;
+      /* remove the extra whites around */
+      margin: 0;
+    }
+    #canvas {
+      background-color: black;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+  <body>
+    <canvas id="canvas" width="640" height="480" style="display:block"></canvas>
+    <script src="./rusty-roguelike.js"></script>
+    <script>
+      window.addEventListener("load", async () => {
+        await wasm_bindgen("./rusty-roguelike_bg.wasm");
+      });
+    </script>
+  </body>
+</html>
